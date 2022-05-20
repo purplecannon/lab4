@@ -38,8 +38,17 @@ int get_block_size(void) {
 
 /* Returns the size (in B) of the cache. */
 int get_cache_size(int block_size) {
-  /* YOUR CODE GOES HERE */
-  return -1;
+  int numOfBlocks = 1;
+  access_cache(0);
+
+  while(access_cache(0)){
+      for(int i = 1; i <= numOfBlocks; i++){
+          access_cache(i * block_size);
+       }
+       numOfBlocks *= 2;
+    }
+
+  return (numOfBlocks / 2) * block_size;
 }
 
 
