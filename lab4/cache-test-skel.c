@@ -48,14 +48,22 @@ int get_cache_size(int block_size) {
        numOfBlocks *= 2;
     }
 
-  return (numOfBlocks / 2) * block_size;
+  return (numOfBlocks/ 2) * block_size;
 }
 
 
 /* Returns the associativity of the cache. */
 int get_cache_assoc(int cache_size) {
-  /* YOUR CODE GOES HERE */
-  return -1;
+  access_cache(0);
+  int assoc = 1;
+
+  while(access_cache(0)){
+      for(int i = 1; i <= assoc; i++){
+          access_cache(i * cache_size);
+        }
+        assoc++;
+    }
+  return assoc - 1;
 }
 
 
