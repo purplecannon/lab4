@@ -29,7 +29,7 @@ int get_block_size(void) {
 
   while(access_cache(currAddr)){
     currAddr++;
-    } 
+  } 
 
   flush_cache();
   return currAddr;
@@ -48,7 +48,7 @@ int get_cache_size(int block_size) {
        numOfBlocks *= 2;
     }
 
-  return (numOfBlocks/ 2) * block_size;
+  return (numOfBlocks / 2) * block_size;
 }
 
 
