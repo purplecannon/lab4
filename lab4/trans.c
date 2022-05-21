@@ -2,8 +2,8 @@
  * CSE 351 Lab 4 (Caches and Cache-Friendly Code)
  * Part 2 - Optimizing Matrix Transpose
  *
- * Name(s):  
- * NetID(s): 
+ * Name(s): Alicia W., Robert Stevens
+ * NetID(s): aliciaw0, rsteve2
  *
  * Each transpose function must have a prototype of the form:
  * void trans(int M, int N, int A[M][N], int B[N][M]);
@@ -25,9 +25,19 @@ int is_transpose(int M, int N, int A[M][N], int B[N][M]);
  *     driver searches for that string to identify the transpose function to be
  *     graded.
  */
+#define BLOCK_SIZE 8 // 2^5=32 bytes is 8 ints
 char transpose_submit_desc[] = "Transpose submission";
 void transpose_submit(int M, int N, int A[M][N], int B[N][M]) {
-
+    int i, j, k, l;
+    for (i = 0; i < M; i += BLOCK_SIZE) {
+        for (j = 0; j < N; j += BLOCK_SIZE) {
+            for (k = 0; k < BLOCK_SIZE; k++) {
+                for (l = 0; l < BLOCK_SIZE; l++) {
+                    B[i+k][j+l] = A[j+l][i+k];
+                }
+            }
+        }
+    }
 }
 
 

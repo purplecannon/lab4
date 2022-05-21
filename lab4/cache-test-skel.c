@@ -42,6 +42,8 @@ int get_cache_size(int block_size) {
   access_cache(0);
 
   while (access_cache(0)) {
+    access_cache(numOfBlocks*block_size);
+    numOfBlocks++;
       for (int i = 1; i <= numOfBlocks; i++) {
           access_cache(i * block_size);
       }
