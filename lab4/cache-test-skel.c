@@ -3,7 +3,7 @@
  * Part 1 - Inferring Mystery Cache Geometries
  *
  * Name(s): Alicia W., Robert Stevens
- * NetID(s): aliciaw0
+ * NetID(s): aliciaw0, rsteve2
  *
  * NOTES:
  * 1. When using access_cache() you do not need to provide a "real" memory
@@ -27,9 +27,9 @@ int get_block_size(void) {
   addr_t currAddr = 0;
   access_cache(currAddr);
 
-  while(access_cache(currAddr)){
+  while (access_cache(currAddr)) {
     currAddr++;
-  } 
+  }
 
   flush_cache();
   return currAddr;
@@ -41,12 +41,12 @@ int get_cache_size(int block_size) {
   int numOfBlocks = 1;
   access_cache(0);
 
-  while(access_cache(0)){
-      for(int i = 1; i <= numOfBlocks; i++){
+  while (access_cache(0)) {
+      for (int i = 1; i <= numOfBlocks; i++) {
           access_cache(i * block_size);
-       }
-       numOfBlocks *= 2;
-    }
+      }
+      numOfBlocks *= 2;
+  }
 
   return (numOfBlocks / 2) * block_size;
 }
@@ -57,12 +57,12 @@ int get_cache_assoc(int cache_size) {
   access_cache(0);
   int assoc = 1;
 
-  while(access_cache(0)){
-      for(int i = 1; i <= assoc; i++){
+  while (access_cache(0)) {
+      for (int i = 1; i <= assoc; i++) {
           access_cache(i * cache_size);
-        }
-        assoc++;
-    }
+      }
+      assoc++;
+  }
   return assoc - 1;
 }
 
