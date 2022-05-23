@@ -26,17 +26,17 @@ int is_transpose(int M, int N, int A[M][N], int B[N][M]);
  *     graded.
  */
 #define BLOCK_SIZE 8 // 2^5=32 bytes is 8 ints
+#define HALF_BLOCK_SIZE (BLOCK_SIZE / 2)
+
+void trans_Alicia32(int M, int N, int A[M][N], int B[N][M]); 
+void trans_Alicia64(int M, int N, int A[M][N], int B[N][M]);
+
 char transpose_submit_desc[] = "Transpose submission";
 void transpose_submit(int M, int N, int A[M][N], int B[N][M]) {
-  int i, j, k, l;
-  for (i = 0; i < M; i += BLOCK_SIZE) {
-    for (j = 0; j < N; j += BLOCK_SIZE) {
-      for (k = 0; k < BLOCK_SIZE; k++) {
-        for (l = 0; l < BLOCK_SIZE; l++) {
-          B[i+k][j+l] = A[j+l][i+k];
-        }
-      }
-    }
+  if (M == 32) {
+    trans_Alicia32(M, N, A, B);
+  } else {
+    trans_Alicia64(M, N, A, B);
   }
 }
 
@@ -76,7 +76,7 @@ void trans(int M, int N, int A[M][N], int B[N][M]) {
 }
 
 char trans_Alicia32_desc[] = "Alicia32N";
-void trans_Alicia32(int M, int N, int A[M][N], int B[N][M]) {
+void trans_Alicia32(int M, int N, int A[M][N], int B[M][N]) {
   int temp[8];
   int i, j, ii, jj;
 
@@ -93,6 +93,41 @@ void trans_Alicia32(int M, int N, int A[M][N], int B[N][M]) {
     }
   }
 }
+
+char trans_Alicia64_desc[] = "alicia64";
+void trans_Alicia64(int M, int N, int A[M][N], int B[M][N]) {
+ int i, j, ii, jj;
+    //src=A dst=B
+    for (i = 0; i < M; i += BLOCK_SIZE) {
+        for (j = 0; j < N; j += BLOCK_SIZE) {
+            // src 0-3 to dst 0-3
+            for (ii = i; ii < i + HALF_BLOCK_SIZE; ii++) {
+                for (jj = j; jj < j + HALF_BLOCK_SIZE; jj++) {
+                    B[jj][ii] = A[ii][jj];
+                }
+            }
+            // src 0-3 to dst 4-7
+            for (ii = i; ii < i + HALF_BLOCK_SIZE; ii++) {
+                for (jj = j + HALF_BLOCK_SIZE; jj < j + BLOCK_SIZE; jj++) {
+                    B[jj][ii] = A[ii][jj];
+                }
+            }
+            // src 4-7 to dst 4-7
+            for (ii = i + HALF_BLOCK_SIZE; ii < i + BLOCK_SIZE; ii++) {
+                for (jj = j + HALF_BLOCK_SIZE; jj < j + BLOCK_SIZE; jj++) {
+                    B[jj][ii] = A[ii][jj];
+                }
+            }
+            // src 4-7 to dst 0-3
+            for (ii = i + HALF_BLOCK_SIZE; ii < i + BLOCK_SIZE; ii++) {
+                for (jj = j; jj < j + HALF_BLOCK_SIZE; jj++) {
+                    B[jj][ii] = A[ii][jj];
+                }
+            }
+        }
+    }
+}
+
 
 /*
  * registerFunctions - This function registers your transpose
@@ -113,6 +148,8 @@ void registerFunctions() {
 
   //Alicia32
   registerTransFunction(trans_Alicia32, trans_Alicia32_desc);
+
+  registerTransFunction(trans_Alicia64, trans_Alicia64_desc);
 }
 
 
