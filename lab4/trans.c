@@ -82,28 +82,17 @@ void trans_Alicia32(int M, int N, int A[M][N], int B[N][M]) {
 
   for(i = 0; i < M; i += BLOCK_SIZE){
     for(j = 0; j < N; j += BLOCK_SIZE){
-      if(i == j){
-        for(ii = i; ii < i + BLOCK_SIZE; ii++){
-          for(jj = 0; jj < 8; jj++){
-            temp[jj] = A[ii][jj + j];
-          }
-          for(jj = 0; jj < 8; jj++){
-            B[jj + j][ii] = temp[jj];
-          }
+      for(ii = i; ii < i + BLOCK_SIZE; ii++){
+        for(jj = 0; jj < 8; jj++){
+          temp[jj] = A[ii][jj + j];
         }
-      }
-      else{
-        for(ii = i; ii < i + BLOCK_SIZE; ii++){ 
-          for(jj = j; jj < j + BLOCK_SIZE; jj++){
-            B[jj][ii] = A[ii][jj];
-          }
+        for(jj = 0; jj < 8; jj++){
+          B[jj + j][ii] = temp[jj];
         }
       }
     }
   }
 }
-
-
 
 /*
  * registerFunctions - This function registers your transpose
